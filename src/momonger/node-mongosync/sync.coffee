@@ -24,6 +24,10 @@ class Sync
       collection: 'last'
     }, @config.dst
 
+    setInterval () =>
+      @logger.info @opByNs if @opByNs
+    , 10000
+
   init: (done) ->
     @opByNs = {}
     @oplogReader.init()
@@ -76,7 +80,7 @@ class Sync
 
   convertDB: (logNS) ->
     ns = @parseNS(logNS)
-    if _.isString @config.options.targetDB[ns.db]
+    if @config.options.targetDB[ns.db]
       ns.db = @config.options.targetDB[ns.db]
       return ns
     return ns if @config.options.targetDB['*']
