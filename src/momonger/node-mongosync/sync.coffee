@@ -25,7 +25,7 @@ class Sync
     }, @config.dst
 
     setInterval () =>
-      @logger.info @opByNs if @opByNs
+      @logger.info @lastTS
     , 10000
 
   init: (done) ->
@@ -80,7 +80,7 @@ class Sync
 
   convertDB: (logNS) ->
     ns = @parseNS(logNS)
-    if @config.options.targetDB[ns.db]
+    if _.isString @config.options.targetDB[ns.db]
       ns.db = @config.options.targetDB[ns.db]
       return ns
     return ns if @config.options.targetDB['*']
