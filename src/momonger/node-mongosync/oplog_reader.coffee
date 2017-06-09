@@ -18,6 +18,7 @@ class OplogReader
       database: 'local'
       collection: 'oplog.rs'
     }
+    @syncFromScratch = @config.options.syncFromScratch || false
     @oplogs = []
     @config.options.bulkLimit ||= DEFAULT_BULK_LIMIT
     @config.options.bulkInterval ||= DEFAULT_BULK_INTERVAL
@@ -40,6 +41,9 @@ class OplogReader
     @oplogMongo.findOne {}, {sort: {$natural:-1}}, done
 
   getQuery: (ts, done) ->
+    if @syncFromScratch
+      return done null, { }
+
     if ts
       return done null, {
         ts:
