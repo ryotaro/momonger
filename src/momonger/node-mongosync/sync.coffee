@@ -32,6 +32,12 @@ class Sync
     @replicating = false
     done null
 
+  getOldestTS: (done) ->
+    @oplogReader.getOldestTS (err, last) =>
+      return done err if err
+      @lastTS = last.ts
+      done null, @lastTS
+
   getTailTS: (done) ->
     @oplogReader.getTailTS (err, last) =>
       return done err if err
@@ -265,7 +271,8 @@ class Sync
       async.during (done) =>
         done null, true
       , (done) =>
-        @getLastTS (err) =>
+        tsfunc = if @config.options.syncFromScratch then @getOldestTS else @getLastTS 
+        tsfunc (err) =>
           return done err if err
           @sync done
       , (err) =>
