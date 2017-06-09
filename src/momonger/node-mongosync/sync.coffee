@@ -47,6 +47,8 @@ class Sync
   getLastTS: (done) ->
     if @config.options.force_tail
       return @getTailTS done
+    else if @config.options.syncFromScratch
+      return @getOldestTS done
     @logger.verbose 'Get lastTS: ', {_id: @config.name}
     @lastMongo.findOne {_id: @config.name}, (err, last) =>
       return done err if err
@@ -271,8 +273,7 @@ class Sync
       async.during (done) =>
         done null, true
       , (done) =>
-        tsfunc = if @config.options.syncFromScratch then @getOldestTS else @getLastTS 
-        tsfunc (err) =>
+        @getLastTS (err) =>
           return done err if err
           @sync done
       , (err) =>
