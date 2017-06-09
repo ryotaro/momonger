@@ -125,6 +125,10 @@ class OplogReader
 
   start: (ts, eachCallback, bulkCallback, done) ->
     @run ts, eachCallback, bulkCallback, (err) ->
+      if err
+        @logger.error('Error after running run', err)
+        @close()
+        return done err
       clearInterval @tailOplogInterval
       @tailOplogInterval = null
       clearInterval @bulkInterval
@@ -224,7 +228,7 @@ class OplogReader
           @close()
           done null
 
-      @stream.on 'error', () =>
-        console.log 'stream error'
+      @stream.on 'error', (err) =>
+        @logger.error 'stream error', err
 
 module.exports = OplogReader
