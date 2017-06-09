@@ -1,6 +1,7 @@
 'use strict'
 async = require 'async'
 _ = require 'underscore'
+{ Timestamp } = require 'mongodb'
 Mongo = require './mongo'
 Logger = require './logger'
 
@@ -42,7 +43,10 @@ class OplogReader
 
   getQuery: (ts, done) ->
     if @syncFromScratch
-      return done null, { }
+      return done null, {
+        ts:
+          $gt: Timestamp.fromNumber(0)
+      }
 
     if ts
       return done null, {
