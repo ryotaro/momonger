@@ -193,9 +193,7 @@ class OplogReader
 
         @bulkIntervalProcessing = false
         if @oplogs.length
-          if !@lastBulkCallbackTime or
-            (now - @lastBulkCallbackTime) >= @config.options.bulkInterval or
-            @config.options.bulkLimit != OplogReader.BULK_UNLIMITED and @oplogs.length >= @config.options.bulkLimit
+          if !@lastBulkCallbackTime or (now - @lastBulkCallbackTime) >= @config.options.bulkInterval or @config.options.bulkLimit != OplogReader.BULK_UNLIMITED and @oplogs.length >= @config.options.bulkLimit
             @bulkIntervalProcessing = true
             @lastBulkCallbackTime = now
             @pause()
