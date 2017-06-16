@@ -56,11 +56,10 @@ class OplogReader
       @lastTS = query.ts.$gt
       @logger.info 'OpLog query: ', query
       @oplogMongo.find query,
-        sort:
-          $natural: 1
         tailable: true
         awaitdata: true
         timeout: false
+        oplogReplay: true  # it significantly improves scanning speed for oplog.rs
         # batchSize: (@config.options.bulkLimit * 2)
       , (err, cursor) =>
         return done err if err
