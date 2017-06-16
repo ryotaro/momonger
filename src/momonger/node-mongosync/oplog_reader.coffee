@@ -63,8 +63,6 @@ class OplogReader
         # batchSize: (@config.options.bulkLimit * 2)
       , (err, cursor) =>
         return done err if err
-        # TODO: how to set noCursorTimeout ?
-        cursor.addCursorFlag 'noCursorTimeout', true
         done null, cursor
 
   getTailOplogs: (ts, done) ->
