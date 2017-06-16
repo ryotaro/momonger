@@ -27,7 +27,7 @@ class OplogReader
     error = false
     unless @config.name
       error = true
-      @logger.error 'Config error: `name` is required'
+      @logger.error 'Coonfig error: `name` is required'
     unless @config.src.type == 'replset'
       error = true
       @logger.error 'Config error: `src.type` must be `replset`'
@@ -67,23 +67,18 @@ class OplogReader
 
   getTailOplogs: (ts, done) ->
     @logger.info 'getTailOplogs: ', ts
-    @oplogMongo.find {},
-      sort:
-        $natural: -1
+    @oplogMongo.find
+      ts:
+        $gt: ts
+    ,
+      oplogReplay: true  # it significantly improves scanning speed for oplog.rs
       # batchSize: @config.options.bulkLimit
     , (err, cursor) =>
       return done err if err
       oplogs = []
       tailStream = cursor.stream()
       closed = false
-      tailStream.on 'data', (oplog)=>
-        return if closed
-        if oplog and oplog.ts > ts
-          oplogs.push oplog
-          return
-        closed = true
-        # console.log '## CLOSE', ts
-        tailStream.close()
+      tailStream.on 'data', oplogs.push
 
       tailStream.on 'end', (oplog)=>
         @lastTS = oplogs[0].ts if oplogs.length
