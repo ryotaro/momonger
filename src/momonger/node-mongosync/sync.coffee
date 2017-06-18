@@ -135,8 +135,8 @@ class Sync
         op.i++
         if repairMode
           return mongo.insert oplog.o, (err) =>
-            return done null if err and err.code = 11000 # Squash duplicate key error
-            done err
+            return done null if err and err.code == 11000 # Squash duplicate key error
+            return done err
         else
           #  There is a possibility of the duplicate key error.
           #  However, cannot do bellows
