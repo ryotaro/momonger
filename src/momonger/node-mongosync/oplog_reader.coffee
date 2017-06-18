@@ -81,8 +81,8 @@ class OplogReader
       tailStream.on 'data', oplogs.push
 
       tailStream.on 'end', (oplog)=>
-        @lastTS = oplogs[0].ts if oplogs.length
-        done null, oplogs.reverse()
+        @lastTS = Array.prototype.slice.call(oplogs, -1).ts if oplogs.length
+        done null, oplogs
 
       tailStream.on 'error', (err)=>
         console.log '##### cursor error', err
