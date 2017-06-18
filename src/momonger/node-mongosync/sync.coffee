@@ -225,6 +225,7 @@ class Sync
             done null
           , =>
             @replicating = false
+            @logger.info('finished!')
             if _.isEmpty @opByNs
               setTimeout =>
                 @replication =>
