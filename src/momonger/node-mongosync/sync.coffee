@@ -32,7 +32,7 @@ class Sync
     @replicating = false
     @bulkCallbackCount = 0
     @eachCallbackCount = 0
-    @callbackCountInterval = setInterval () =>
+    setInterval () =>
       @logger.info "callbackCountInfo: each: #{@eachCallbackCount}, bulk: #{@bulkCallbackCount}, and currently #{@replicateCallbacks.length} counts left"
     , 1000 * 10  # 10secs
     done null
