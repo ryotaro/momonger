@@ -30,6 +30,11 @@ class Sync
     @lastMongo = new Mongo @lastConfig
     @replicateCallbacks = []
     @replicating = false
+    @bulkCallbackCount = 0
+    @eachCallbackCount = 0
+    @callbackCountInterval = setInterval () =>
+      @logger.info "callbackCountInfo: each: #{@eachCallbackCount}, bulk: #{@bulkCallbackCount}, and currently #{@replicateCallbacks.length} counts left"
+    , 1000 * 10  # 10secs
     done null
 
   getTailTS: (done) ->
@@ -251,11 +256,13 @@ class Sync
   sync: (done) ->
     @dstMongoByNs = {}
     eachCallback = (oplog, done)=>
+      @eachCallbackCount++
       @applyOplog oplog, false, (err, filteredLog) =>
         @oplogReader.resume() unless @replicating
         done err, filteredLog
 
     bulkCallback = (oplogs, done)=>
+      @bulkCallbackCount++
       @replication done
 
     @oplogReader.start @lastTS, eachCallback, bulkCallback, done
