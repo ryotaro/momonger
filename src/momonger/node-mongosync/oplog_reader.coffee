@@ -116,7 +116,8 @@ class OplogReader
       done? err
 
   start: (ts, eachCallback, bulkCallback, done) ->
-    @run ts, eachCallback, bulkCallback, (err) ->
+    @run ts, eachCallback, bulkCallback, (err) =>
+      @logger.info 'finishing oplog read'
       if err
         @logger.error('Error after running run', err)
         @close()
@@ -213,6 +214,7 @@ class OplogReader
 
       @stream.on 'end', () =>
         unless doneCalled
+          @logger.info 'end called'
           @logger.error 'Cursor closed'
           doneCalled = true
           @close()
